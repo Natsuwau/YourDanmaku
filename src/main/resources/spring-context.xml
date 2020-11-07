@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+       http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd 
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--    让spring通过自动扫描来查询和管理Bean,排除Controller-->
+    <context:annotation-config />
+    <context:component-scan base-package="yours.front.service" />
+
+    <context:annotation-config />
+    <context:component-scan base-package="yours.admin.service" />
+
+    <!--<context:component-scan base-package="yours">-->
+    <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
+    <!--</context:component-scan>-->
+<!--载入配置文件-->
+
+    <context:property-placeholder location="classpath:db.properties"/>
+
+<!--    连接池-->
+
+    <bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${name}"/>
+        <property name="password" value="${password}"/>
+    </bean>
+
+<!--    配置sqlSessionFactory 整合MyBatis-->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 使用上述配置好的数据源以及SQL映射文件实例化sqlSessionFactory -->
+        <property name="dataSource" ref="druidDataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="typeAliasesPackage" value="yours.pojo"/>
+        <!-- 支持通配符 -->
+        <property name="mapperLocations" value="classpath:mappers/*.xml" />
+    </bean>
+
+<!--    MyBatis自动参与到spring事务管理中，无需额外配置，只要org.mybatis.spring.SqlSessionFactoryBean-->
+<!--    引用的数据源与DataSourceTransactionManager引用的数据源一致即可，否则事务管理会不起作用。-->
+<!--    配置Spring的事物管理器-->
+
+
+<!--    配置扫描器-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+<!--        扫描dao以及它子类下的所有映射接口类-->
+        <property name="basePackage" value="yours.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+<!--    配置spring的事务管理器-->
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="druidDataSource"/>
+    </bean>
+
+<!--    注解事务-->
+    
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+
+
+
+<!--    引入shiro配置页面-->
+    <import resource="spring-shiro.xml"/>
+</beans>

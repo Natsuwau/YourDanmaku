@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 如果定义了mapper接口,namespace就指定为该接口全限定名 -->
+<mapper namespace="yours.dao.QueryMapper">
+    <resultMap id="FrontVideoResultMapAndFFID" type="yours.pojo.FrontVideo">
+        <id column="fv_id" jdbcType="VARCHAR" property="id" />
+        <result column="fu_id" jdbcType="VARCHAR" property="frontUserId" />
+        <result column="fv_name" jdbcType="VARCHAR" property="name" />
+        <result column="fv_url" jdbcType="VARCHAR" property="url" />
+        <result column="fv_picUrl" jdbcType="VARCHAR" property="picUrl" />
+        <result column="fv_coverUrl" jdbcType="VARCHAR" property="coverUrl" />
+        <result column="fv_desc" jdbcType="VARCHAR" property="desc" />
+        <result column="fv_scope" jdbcType="VARCHAR" property="scope" />
+        <result column="fv_uploadTime" jdbcType="TIMESTAMP" property="uploadTime" />
+        <result column="fv_duration" jdbcType="DOUBLE" property="duration" />
+        <result column="fv_type" jdbcType="VARCHAR" property="type" />
+        <result column="fv_tags" jdbcType="VARCHAR" property="tags" />
+        <result column="fv_like" jdbcType="INTEGER" property="like" />
+        <result column="fv_hits" jdbcType="BIGINT" property="hits" />
+        <result column="fv_opinions" jdbcType="VARCHAR" property="opinions" />
+        <result column="fv_state" jdbcType="INTEGER" property="state" />
+        <result column="ff_id" jdbcType="VARCHAR" property="frontFavoriteId" />
+    </resultMap>
+    <sql id="QH_Query_SQL">
+        <if test="whereSentence != null">
+            ${whereSentence}
+        </if>
+        <if test="orderBySentence != null">
+            ${orderBySentence}
+        </if>
+        <if test="limitSentence != null">
+            ${limitSentence}
+        </if>
+    </sql>
+    <!-- mysql用于保存此次查询总数的关键字 -->
+    <sql id="FOUND_SQL">
+		SQL_CALC_FOUND_ROWS
+	</sql>
+
+    <!-- QH查询系统用户 -->
+    <select id="querySysUser" resultMap="yours.dao.SysUserMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.SysUserMapper.Base_Column_List" />
+        FROM sys_user
+        <include refid="QH_Query_SQL" />
+    </select>
+    <!-- QH查询系统角色 -->
+    <select id="querySysRole" resultMap="yours.dao.SysRoleMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.SysRoleMapper.Base_Column_List" />
+        FROM sys_role
+        <include refid="QH_Query_SQL" />
+    </select>
+
+    <!-- QH查询系统资源 -->
+    <select id="querySysResource" resultMap="yours.dao.SysResourceMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.SysResourceMapper.Base_Column_List" />
+        FROM sys_resource
+        <include refid="QH_Query_SQL" />
+    </select>
+
+    <!-- QH查询前台用户 -->
+    <select id="queryFrontUser" resultMap="yours.dao.FrontUserMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.FrontUserMapper.Base_Column_List" />
+        FROM front_user
+        <include refid="QH_Query_SQL" />
+    </select>
+
+    <!-- QH查询前台视频 -->
+    <select id="queryFrontVideo" resultMap="yours.dao.FrontVideoMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.FrontVideoMapper.Base_Column_List" />
+        FROM front_video
+        <include refid="QH_Query_SQL" />
+    </select>
+
+    <!-- QH查询前台弹幕信息 -->
+    <select id="queryFrontDanmaku" resultMap="yours.dao.FrontDanmakuMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.FrontDanmakuMapper.Base_Column_List" />
+        FROM front_danmaku
+        <include refid="QH_Query_SQL" />
+    </select>
+
+    <!-- QH查询前台评论信息 -->
+    <select id="queryFrontComment" resultMap="yours.dao.FrontCommentMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.FrontCommentMapper.Base_Column_List" />
+        FROM front_comment
+        <include refid="QH_Query_SQL" />
+    </select>
+
+    <!-- QH查询前台任务信息 -->
+    <select id="queryFrontTask" resultMap="yours.dao.FrontTaskMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.FrontTaskMapper.Base_Column_List" />
+        FROM front_task
+        <include refid="QH_Query_SQL" />
+    </select>
+
+    <!-- QH查询前台屏蔽关键字信息 -->
+    <select id="queryFrontHateWord" resultMap="yours.dao.FrontHateWordMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        <include refid="yours.dao.FrontHateWordMapper.Base_Column_List" />
+        FROM front_hateWord
+        <include refid="QH_Query_SQL" />
+    </select>
+    <!-- QH查询前台收藏表对应视频信息 -->
+    <select id="queryFavoriteVideos" resultMap="FrontVideoResultMapAndFFID"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        V.fv_id as fv_id, V.fu_id as fu_id, fv_name, fv_url, fv_picUrl,
+        fv_coverUrl, fv_desc, fv_scope, fv_uploadTime,
+        fv_duration, fv_type,
+        fv_tags, fv_like, fv_hits, fv_opinions, fv_state ,F.ff_id as
+        ff_id
+        FROM
+        front_favorite F,front_video V
+        WHERE F.fv_id = V.fv_id AND
+        <if test="whereSentenceNoWhereWord != null">
+            ${whereSentenceNoWhereWord}
+        </if>
+        <if test="orderBySentence != null">
+            ${orderBySentence}
+        </if>
+        <if test="limitSentence != null">
+            ${limitSentence}
+        </if>
+    </select>
+
+    <!-- QH查询前台收藏表对应用户信息 -->
+    <select id="queryFavoriteUsers" resultMap="yours.dao.FrontUserMapper.BaseResultMap"
+            parameterType="yours.info.QueryHandler">
+        SELECT
+        <include refid="FOUND_SQL" />
+        U.fu_id, fu_name, fu_password, fu_icon, fu_sex, fu_birthday, fu_phone,
+        fu_email, fu_address,
+        fu_signature, fu_regTime, fu_coin,
+        fu_markHistory, fu_state
+        FROM front_favorite
+        F,front_user U
+        WHERE F.fu_id
+        = U.fu_id AND
+        <if test="whereSentenceNoWhereWord != null">
+            ${whereSentenceNoWhereWord}
+        </if>
+        <if test="orderBySentence != null">
+            ${orderBySentence}
+        </if>
+        <if test="limitSentence != null">
+            ${limitSentence}
+        </if>
+    </select>
+    <!-- 获取上次limit总数 -->
+    <select id="findLastRows" resultType="long">
+		SELECT FOUND_ROWS();
+	</select>
+
+</mapper>

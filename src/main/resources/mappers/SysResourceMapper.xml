@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="yours.dao.SysResourceMapper">
+
+    <resultMap id="BaseResultMap" type="yours.pojo.SysResource">
+        <id column="sre_id" jdbcType="VARCHAR" property="id" />
+        <result column="sre_name" jdbcType="VARCHAR" property="name" />
+        <result column="sre_type" jdbcType="VARCHAR" property="type" />
+        <result column="sre_icon" jdbcType="VARCHAR" property="icon" />
+        <result column="sre_priority" jdbcType="INTEGER" property="priority" />
+        <result column="sre_level" jdbcType="INTEGER" property="level" />
+        <result column="sre_uplevelid" jdbcType="VARCHAR" property="upLevelId" />
+        <result column="sre_url" jdbcType="VARCHAR" property="url" />
+        <result column="sre_permission" jdbcType="VARCHAR" property="permission" />
+        <result column="sre_other" jdbcType="VARCHAR" property="other" />
+        <result column="sre_state" jdbcType="INTEGER" property="state" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		sre_id, sre_name, sre_type, sre_icon, sre_priority, sre_level, sre_uplevelid,
+		sre_url,
+		sre_permission, sre_other, sre_state
+	</sql>
+
+
+    <!-- 根据系统角色id集合查询对应资源信息 -->
+    <select id="findWithSysRoleIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from sys_resource
+        <if test="sysRoleIds != null or onlyActive">
+            where
+        </if>
+        <if test="sysRoleIds != null">
+            sre_id in(
+            SELECT rr.sre_id FROM role_resource as rr WHERE rr.sro_id
+            in (
+            <foreach item="item" collection="sysRoleIds" separator=",">
+                #{item,jdbcType=VARCHAR}
+            </foreach>
+            )
+            )
+        </if>
+        <if test="sysRoleIds != null and onlyActive">
+            AND
+        </if>
+        <if test="onlyActive">
+            sre_state = 1
+        </if>
+    </select>
+
+
+
+
+
+
+
+    <!--*****************************以下为自动生成方法语句***************************** -->
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from sys_resource
+        where sre_id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from sys_resource
+		where sre_id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+    <insert id="insert" parameterType="yours.pojo.SysResource">
+		insert into sys_resource (sre_id, sre_name, sre_type,
+		sre_icon, sre_priority, sre_level,
+		sre_uplevelid, sre_url, sre_permission,
+		sre_other, sre_state)
+		values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{icon,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{level,jdbcType=INTEGER},
+		#{upLevelId,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+		#{permission,jdbcType=VARCHAR},
+		#{other,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
+	</insert>
+
+    <insert id="insertSelective" parameterType="yours.pojo.SysResource">
+        insert into sys_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                sre_id,
+            </if>
+            <if test="name != null">
+                sre_name,
+            </if>
+            <if test="type != null">
+                sre_type,
+            </if>
+            <if test="icon != null">
+                sre_icon,
+            </if>
+            <if test="priority != null">
+                sre_priority,
+            </if>
+            <if test="level != null">
+                sre_level,
+            </if>
+            <if test="upLevelId != null">
+                sre_uplevelid,
+            </if>
+            <if test="url != null">
+                sre_url,
+            </if>
+            <if test="permission != null">
+                sre_permission,
+            </if>
+            <if test="other != null">
+                sre_other,
+            </if>
+            <if test="state != null">
+                sre_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="icon != null">
+                #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="priority != null">
+                #{priority,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="upLevelId != null">
+                #{upLevelId,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="permission != null">
+                #{permission,jdbcType=VARCHAR},
+            </if>
+            <if test="other != null">
+                #{other,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="yours.pojo.SysResource">
+        update sys_resource
+        <set>
+            <if test="name != null">
+                sre_name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                sre_type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="icon != null">
+                sre_icon = #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="priority != null">
+                sre_priority = #{priority,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                sre_level = #{level,jdbcType=INTEGER},
+            </if>
+            <if test="upLevelId != null">
+                sre_uplevelid = #{upLevelId,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                sre_url = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="permission != null">
+                sre_permission = #{permission,jdbcType=VARCHAR},
+            </if>
+            <if test="other != null">
+                sre_other = #{other,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                sre_state = #{state,jdbcType=INTEGER},
+            </if>
+        </set>
+        where sre_id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="yours.pojo.SysResource">
+		update sys_resource
+		set sre_name = #{name,jdbcType=VARCHAR},
+		sre_type = #{type,jdbcType=VARCHAR},
+		sre_icon = #{icon,jdbcType=VARCHAR},
+		sre_priority = #{priority,jdbcType=INTEGER},
+		sre_level = #{level,jdbcType=INTEGER},
+		sre_uplevelid = #{upLevelId,jdbcType=VARCHAR},
+		sre_url = #{url,jdbcType=VARCHAR},
+		sre_permission = #{permission,jdbcType=VARCHAR},
+		sre_other = #{other,jdbcType=VARCHAR},
+		sre_state = #{state,jdbcType=INTEGER}
+		where sre_id = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>
+

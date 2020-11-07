@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID" version="3.1">
+	<display-name>MineDanmaku</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	<filter>
+		<filter-name>encoding</filter-name>
+		<filter-class>yours.filter.EncodingFilter</filter-class>
+		<init-param>
+			<param-name>encodeType</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encoding</filter-name>
+		<!-- 过滤所有链接 -->
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- SQL注入和特殊字符过滤器 ,过滤url规则写入过滤器内部 -->
+	<filter>
+		<description>解决SQL注入问题</description>
+		<filter-name>SQLInjectionFilter</filter-name>
+		<filter-class>yours.filter.SQLInjectionFilter</filter-class>
+		<init-param>
+			<description>要被过滤掉的字符列表，空格分开</description>
+			<param-name>dataFields</param-name>
+			<param-value>and exec insert select delete update count chr mid master truncate char declare</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SQLInjectionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+	<!-- 定义请求类型转换拦截器 -->
+	<filter>
+		<filter-name>methodFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+	</filter>
+	<!-- 使用请求类型转换拦截器 拦截springmvc -->
+	<filter-mapping>
+		<filter-name>methodFilter</filter-name>
+		<servlet-name>springmvc</servlet-name>
+	</filter-mapping>
+
+	<!-- 配置指定位置静态资源默认处理器 -->
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/assets/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- springmvc容器配置 -->
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-mvc.xml</param-value>
+		</init-param>
+		<!-- 使自定义id为handlerExceptionResolver的异常处理器起作用 -->
+		<init-param>
+			<param-name>detectAllHandlerExceptionResolvers</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<!-- spring容器相关配置 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring-context.xml</param-value>
+	</context-param>
+	<!-- 内存泄漏控制 -->
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+	<!-- 添加上下文监听 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- 1. 配置 Shiro 的 shiroFilter. 2. DelegatingFilterProxy 实际上是 Filter 的一个代理对象. 
+		默认情况下, Spring 会到 IOC 容器中查找和 <filter-name> 对应的 filter bean. 也可以通过 targetBeanName 
+		的初始化参数来配置 filter bean 的 id. 注册这个后，可以在已被spring管理过滤器中使用spring管理的其他bean -->
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+<!--	<filter>-->
+<!--		<filter-name>FrontVideoFilter</filter-name>-->
+<!--		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
+<!--	</filter>-->
+
+<!--	<filter-mapping>-->
+<!--		<filter-name>FrontVideoFilter</filter-name>-->
+<!--		&lt;!&ndash; 过滤视频链接 &ndash;&gt;-->
+<!--		<url-pattern>/assets/uploadData/video/*</url-pattern>-->
+<!--	</filter-mapping>-->
+
+	<!-- 配置session超时时间，单位分钟 -->
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/views/pages/500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/views/pages/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/WEB-INF/views/pages/401.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/WEB-INF/views/pages/403.jsp</location>
+	</error-page>
+
+
+
+
+</web-app>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="yours.dao.ShipMapper">
+
+    <!--删除指定系统用户id所有角色映射关系 -->
+    <delete id="delUserRoleShipWithSysUserId" parameterType="java.lang.String">
+		delete
+		from user_role
+		where su_id = #{sysUserId,jdbcType=VARCHAR}
+	</delete>
+
+    <!--删除指定系统角色id所有用户映射关系 -->
+    <delete id="delUserRoleShipWithSysRoleId" parameterType="java.lang.String">
+		delete
+		from user_role
+		where sro_id = #{sysRoleId,jdbcType=VARCHAR}
+	</delete>
+
+    <!--设置指定id用户下的角色映射关系 -->
+    <insert id="addUserRoleShipsByUserIdAndRoleIds">
+        insert into user_role (su_id, sro_id) values
+        <foreach item="item" collection="roleIds" separator=",">
+            (
+            #{sysUserId,jdbcType=VARCHAR},
+            #{item,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <!--删除指定系统角色id所有资源映射关系 -->
+    <delete id="delRoleResourceShipWithSysRoleId" parameterType="java.lang.String">
+		delete
+		from role_resource
+		where sro_id = #{sysRoleId,jdbcType=VARCHAR}
+	</delete>
+
+    <!--删除指定系统资源id所有角色映射关系 -->
+    <delete id="delRoleResourceShipWithSysResourceId" parameterType="java.lang.String">
+		delete
+		from role_resource
+		where sre_id =
+		#{sysResourceId,jdbcType=VARCHAR}
+	</delete>
+
+    <!--设置指定id角色下的资源映射关系 -->
+    <insert id="addRoleResourceShipsByRoleIdAndResourceIds">
+        insert into role_resource (sro_id, sre_id) values
+        <foreach item="item" collection="resourceIds" separator=",">
+            (
+            #{sysRoleId,jdbcType=VARCHAR},
+            #{item,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+    </insert>
+
+</mapper>

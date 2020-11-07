@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="yours.dao.FrontHateWordMapper">
+
+    <resultMap id="BaseResultMap" type="yours.pojo.FrontHateWord">
+        <id column="fh_id" jdbcType="VARCHAR" property="id" />
+        <result column="fh_word" jdbcType="VARCHAR" property="word" />
+        <result column="fh_target" jdbcType="VARCHAR" property="target" />
+        <result column="fh_level" jdbcType="INTEGER" property="level" />
+        <result column="fh_state" jdbcType="INTEGER" property="state" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    fh_id, fh_word, fh_target, fh_level, fh_state
+  </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from front_hateword
+        where fh_id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from front_hateword
+    where fh_id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insert" parameterType="yours.pojo.FrontHateWord">
+    insert into front_hateword (fh_id, fh_word, fh_target,
+      fh_level, fh_state)
+    values (#{id,jdbcType=VARCHAR}, #{word,jdbcType=VARCHAR}, #{target,jdbcType=VARCHAR},
+      #{level,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+  </insert>
+
+    <insert id="insertSelective" parameterType="yours.pojo.FrontHateWord">
+        insert into front_hateword
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                fh_id,
+            </if>
+            <if test="word != null">
+                fh_word,
+            </if>
+            <if test="target != null">
+                fh_target,
+            </if>
+            <if test="level != null">
+                fh_level,
+            </if>
+            <if test="state != null">
+                fh_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="word != null">
+                #{word,jdbcType=VARCHAR},
+            </if>
+            <if test="target != null">
+                #{target,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="yours.pojo.FrontHateWord">
+        update front_hateword
+        <set>
+            <if test="word != null">
+                fh_word = #{word,jdbcType=VARCHAR},
+            </if>
+            <if test="target != null">
+                fh_target = #{target,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                fh_level = #{level,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                fh_state = #{state,jdbcType=INTEGER},
+            </if>
+        </set>
+        where fh_id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="yours.pojo.FrontHateWord">
+    update front_hateword
+    set fh_word = #{word,jdbcType=VARCHAR},
+      fh_target = #{target,jdbcType=VARCHAR},
+      fh_level = #{level,jdbcType=INTEGER},
+      fh_state = #{state,jdbcType=INTEGER}
+    where fh_id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
+

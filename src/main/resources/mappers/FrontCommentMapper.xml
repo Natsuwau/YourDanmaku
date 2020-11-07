@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="yours.dao.FrontCommentMapper">
+
+    <resultMap id="BaseResultMap" type="yours.pojo.FrontComment">
+        <id column="fc_id" jdbcType="VARCHAR" property="id" />
+        <result column="fc_refId" jdbcType="VARCHAR" property="refId" />
+        <result column="fu_id" jdbcType="VARCHAR" property="frontUserId" />
+        <result column="fv_id" jdbcType="VARCHAR" property="frontVideoId" />
+        <result column="fc_content" jdbcType="VARCHAR" property="content" />
+        <result column="fc_time" jdbcType="TIMESTAMP" property="time" />
+        <result column="fc_state" jdbcType="INTEGER" property="state" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		fc_id, fc_refId, fu_id, fv_id, fc_content, fc_time, fc_state
+	</sql>
+
+    <resultMap id="Mine_BaseResultMap" type="yours.pojo.FrontComment">
+        <id column="fc_id" jdbcType="VARCHAR" property="id" />
+        <result column="fc_refId" jdbcType="VARCHAR" property="refId" />
+        <result column="fu_id" jdbcType="VARCHAR" property="frontUserId" />
+        <result column="fv_id" jdbcType="VARCHAR" property="frontVideoId" />
+        <result column="fc_content" jdbcType="VARCHAR" property="content" />
+        <result column="fc_time" jdbcType="TIMESTAMP" property="time" />
+        <result column="fc_state" jdbcType="INTEGER" property="state" />
+        <association property="frontUser" javaType="yours.pojo.FrontUser">
+            <result column="fu_id" jdbcType="VARCHAR" property="id" />
+            <result column="fu_name" jdbcType="VARCHAR" property="name" />
+            <result column="fu_password" jdbcType="VARCHAR" property="password" />
+            <result column="fu_icon" jdbcType="VARCHAR" property="icon" />
+            <result column="fu_sex" jdbcType="INTEGER" property="sex" />
+            <result column="fu_birthday" jdbcType="DATE" property="birthday" />
+            <result column="fu_phone" jdbcType="VARCHAR" property="phone" />
+            <result column="fu_email" jdbcType="VARCHAR" property="email" />
+            <result column="fu_address" jdbcType="VARCHAR" property="address" />
+            <result column="fu_signature" jdbcType="VARCHAR" property="signature" />
+            <result column="fu_regTime" jdbcType="TIMESTAMP" property="regTime" />
+            <result column="fu_coin" jdbcType="INTEGER" property="coin" />
+            <result column="fu_markHistory" jdbcType="BIGINT" property="markHistory" />
+            <result column="fu_state" jdbcType="INTEGER" property="state" />
+        </association>
+    </resultMap>
+
+    <!-- 查询对应视频下评论，带用户头像 -->
+    <select id="selectByVidWithUserInfo" resultMap="Mine_BaseResultMap">
+        SELECT
+        SQL_CALC_FOUND_ROWS
+        fc_id, fc_refId, C.fu_id as fu_id, fv_id, fc_content,
+        fc_time, fc_state,
+        fu_name, fu_password, fu_icon, fu_sex, fu_birthday, fu_phone, fu_email, fu_address,
+        fu_signature, fu_regTime, fu_coin, fu_markHistory, fu_state
+        FROM front_comment C,front_user U
+        WHERE
+        C.fu_id =
+        U.fu_id AND C.fv_id=#{vid,jdbcType=VARCHAR}
+        ORDER BY fc_time DESC
+        <if test="pageIndex != null and  size != null">
+            limit #{pageIndex,jdbcType=INTEGER},#{size,jdbcType=INTEGER}
+        </if>
+    </select>
+    <!-- 以下自动生成 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.String"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from front_comment
+        where fc_id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from front_comment
+		where fc_id = #{id,jdbcType=VARCHAR}
+	</delete>
+    <insert id="insert" parameterType="yours.pojo.FrontComment">
+		insert into front_comment (fc_id, fc_refId, fu_id,
+		fv_id, fc_content, fc_time,
+		fc_state)
+		values (#{id,jdbcType=VARCHAR}, #{refId,jdbcType=VARCHAR},
+		#{frontUserId,jdbcType=VARCHAR},
+		#{frontVideoId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP},
+		#{state,jdbcType=INTEGER})
+	</insert>
+    <insert id="insertSelective" parameterType="yours.pojo.FrontComment">
+        insert into front_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                fc_id,
+            </if>
+            <if test="refId != null">
+                fc_refId,
+            </if>
+            <if test="frontUserId != null">
+                fu_id,
+            </if>
+            <if test="frontVideoId != null">
+                fv_id,
+            </if>
+            <if test="content != null">
+                fc_content,
+            </if>
+            <if test="time != null">
+                fc_time,
+            </if>
+            <if test="state != null">
+                fc_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="refId != null">
+                #{refId,jdbcType=VARCHAR},
+            </if>
+            <if test="frontUserId != null">
+                #{frontUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="frontVideoId != null">
+                #{frontVideoId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="yours.pojo.FrontComment">
+        update front_comment
+        <set>
+            <if test="refId != null">
+                fc_refId = #{refId,jdbcType=VARCHAR},
+            </if>
+            <if test="frontUserId != null">
+                fu_id = #{frontUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="frontVideoId != null">
+                fv_id = #{frontVideoId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                fc_content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                fc_time = #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                fc_state = #{state,jdbcType=INTEGER},
+            </if>
+        </set>
+        where fc_id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="yours.pojo.FrontComment">
+		update front_comment
+		set fc_refId = #{refId,jdbcType=VARCHAR},
+		fu_id = #{frontUserId,jdbcType=VARCHAR},
+		fv_id = #{frontVideoId,jdbcType=VARCHAR},
+		fc_content = #{content,jdbcType=VARCHAR},
+		fc_time = #{time,jdbcType=TIMESTAMP},
+		fc_state = #{state,jdbcType=INTEGER}
+		where fc_id = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>
